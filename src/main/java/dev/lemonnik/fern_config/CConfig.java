@@ -5,24 +5,31 @@ import dev.lemonnik.fern_config.utils.CCategory;
 import dev.lemonnik.fern_config.utils.CMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class CConfig {
     private final CMap categories = new CMap();
 
     protected <T extends CValue<?>> T register(CCategory category, T value) {
-        categories.map()
-                .computeIfAbsent(category, k -> new LinkedHashMap<>())
-                .put(value.key, value);
+        List<CValue<?>> values = categories.map().computeIfAbsent(category, k -> new ArrayList<>());
+        for (int i = 0; i < values.size(); i++) {
+            if (Objects.equals(values.get(i).key, value.key)) {
+                values.set(i, value);
+                return value;
+            }
+        }
+        values.add(value);
         return value;
     }
 
-    public Map<CCategory, LinkedHashMap<String, CValue<?>>> getCategories() {
+    public Map<CCategory, List<CValue<?>>> getCategories() {
         return categories.map();
     }
 
-    public LinkedHashMap<String, CValue<?>> getValues(CCategory category) {
+    public List<CValue<?>> getValues(CCategory category) {
         return categories.map().get(category);
     }
 
@@ -31,10 +38,11 @@ public abstract class CConfig {
     protected abstract @NotNull CExporter.Format getFormat();
 
     public CValue<?> getValue(String key) {
-        for (CCategory category : categories.map().keySet()) {
-            CValue<?> value = categories.map().get(category).get(key);
-            if (value != null) {
-                return value;
+        for (List<CValue<?>> values : categories.map().values()) {
+            for (CValue<?> value : values) {
+                if (Objects.equals(value.key, key)) {
+                    return value;
+                }
             }
         }
         return null;
