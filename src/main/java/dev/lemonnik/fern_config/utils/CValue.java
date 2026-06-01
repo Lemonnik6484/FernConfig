@@ -1,4 +1,4 @@
-package dev.lemonnik.fern_config.types;
+package dev.lemonnik.fern_config.utils;
 
 public abstract class CValue<T> {
     public final String key;

@@ -1,5 +1,7 @@
 package dev.lemonnik.fern_config.types;
 
+import dev.lemonnik.fern_config.utils.CValue;
+
 import java.util.Arrays;
 
 public class CEnum<T extends Enum<T>> extends CValue<T> {

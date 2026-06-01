@@ -1,6 +1,8 @@
 package dev.lemonnik.fern_config;
 
 //? if fabric
+import dev.lemonnik.fern_config.impl.TestJSON5Config;
+import dev.lemonnik.fern_config.impl.TestTOMLConfig;
 import net.fabricmc.api.ModInitializer;
 
 //? if forge
@@ -36,7 +38,9 @@ public class FernConfig
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static final String VERSION = /*$ mod_version */"0.0.1";
-	public static final int PATCH = 3;
+
+	public static final TestJSON5Config JSON5_CONFIG = new TestJSON5Config();
+	public static final TestTOMLConfig TOML_CONFIG = new TestTOMLConfig();
 
 	//? if fabric
 	@Override public void onInitialize()
@@ -52,6 +56,9 @@ public class FernConfig
 
 	{
 		LOGGER.info("Starting FernConfig...");
+
+		JSON5_CONFIG.save();
+		TOML_CONFIG.save();
 	}
 
 	//? >=1.21.11 {

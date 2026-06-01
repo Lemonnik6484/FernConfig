@@ -9,9 +9,6 @@ plugins {
     id 'io.papermc.paperweight.userdev' version '2.0.0-beta.21' apply false
     // https://github.com/jpenilla/run-task
     id 'xyz.jpenilla.run-paper' version '3.0.2' apply false
-
-    // https://github.com/Fallen-Breath/yamlang
-    id 'me.fallenbreath.yamlang' version '1.5.0'
 }
 
 repositories {
@@ -27,10 +24,6 @@ repositories {
     }
     maven {
         url 'https://maven.neoforged.net/releases'
-    }
-    maven {
-        name = 'papermc'
-        url = 'https://repo.papermc.io/repository/maven-public/'
     }
     maven {
         url "https://libraries.minecraft.net"
@@ -63,8 +56,7 @@ if (use_architectury_loom) {
 }
 
 String MOD_ICON_PATH = "assets/${project.mod_id}/icon.png"
-List<String> MIXIN_CONFIG_PATHS = ["${project.mod_id}.mixins.json"]
-String LANG_DIR = "assets/${project.mod_id}/lang"
+List<String> MIXIN_CONFIG_PATHS = ["fern_config.mixins.json"]
 JavaVersion JAVA_COMPATIBILITY
 JavaVersion MIXIN_COMPATIBILITY
 int javaVersion
@@ -236,12 +228,6 @@ processResources {
         // forge requires the mod icon file to be at the resource root
         filesMatching(MOD_ICON_PATH) { f -> f.path = new File(f.path).getName() }
     }
-}
-
-// https://github.com/Fallen-Breath/yamlang
-yamlang {
-    targetSourceSets = [sourceSets.main]
-    inputDir = LANG_DIR
 }
 
 tasks.withType(JavaCompile).configureEach {

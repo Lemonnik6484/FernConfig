@@ -1,6 +1,6 @@
 package dev.lemonnik.fern_config;
 
-import dev.lemonnik.fern_config.types.CValue;
+import dev.lemonnik.fern_config.utils.CValue;
 import dev.lemonnik.fern_config.utils.CCategory;
 import dev.lemonnik.fern_config.utils.CMap;
 import org.jetbrains.annotations.NotNull;

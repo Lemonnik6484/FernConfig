@@ -1,14 +1,16 @@
 package dev.lemonnik.fern_config.types;
 
+import dev.lemonnik.fern_config.utils.CValue;
+
 public class CBoolean extends CValue<Boolean> {
     private final boolean defaultValue;
     private Boolean value;
 
-    public CBoolean(String key, String comment, boolean value) {
+    public CBoolean(String key, String comment, boolean defaultValue) {
         super(key, comment);
 
-        this.value = value;
-        this.defaultValue = value;
+        this.value = defaultValue;
+        this.defaultValue = defaultValue;
     }
 
     public void toggle() {

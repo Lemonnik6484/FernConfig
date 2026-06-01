@@ -1,14 +1,11 @@
 package dev.lemonnik.fern_config;
 
-import com.google.gson.*;
 import dev.lemonnik.fern_config.utils.CMap;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.nio.file.Path;
 
 public class CExporter {
-    private static final Gson GSON = new Gson();
-
     public enum Format {
         JSON5(".json5"),
         TOML(".toml");
@@ -27,11 +24,13 @@ public class CExporter {
     public static CMap load(CMap defaults, String fileName, Format format) {
         Path path = configPath(fileName, format);
 
+        return null;
     }
 
     public static boolean save(CMap config, String fileName, Format format) {
         Path path = configPath(fileName, format);
 
+        return false;
     }
 
     private static Path configPath(String fileName, Format format) {
