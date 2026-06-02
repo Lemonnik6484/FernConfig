@@ -10,6 +10,10 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CExporter {
     public enum Format {
@@ -29,8 +33,116 @@ public class CExporter {
 
     public static CMap load(CMap defaults, String fileName, Format format) {
         Path path = configPath(fileName, format);
+        String[] content;
+        String currentCategory = "";
 
-        return null;
+        boolean inMask = false;
+        String maskKey = "";
+        List<String> maskStr = new ArrayList<>();
+
+        try {
+            content = Files.readAllLines(path).toArray(new String[0]);
+        } catch (Exception e) {
+            FernConfig.LOGGER.error("Error reading config file: {}", fileName);
+            e.printStackTrace();
+            return defaults;
+        }
+
+        Pattern categoryPattern = Pattern.compile("");
+        Pattern booleanPattern = Pattern.compile("");
+        Pattern enumPattern = Pattern.compile("");
+        Pattern maskPattern = Pattern.compile("");
+
+        Pattern maskValuePattern = Pattern.compile("\"([^\"]+)\"");
+
+        if (format == Format.JSON5) {
+            categoryPattern = Pattern.compile("\"([^\"]*)\":\\s*\\{");
+            booleanPattern = Pattern.compile("\"([^\"]+)\":\\s*(true|false)");
+            enumPattern = Pattern.compile("\"([^\"]+)\":\\s*\"([A-Z_]+)\"");
+            maskPattern = Pattern.compile("\"([^\"]*)\":\\s*\\[");
+        } else if (format == Format.TOML) {
+            categoryPattern = Pattern.compile("\\[(.+)]");
+            booleanPattern = Pattern.compile("(\\w+)\\s*=\\s*(true|false)");
+            enumPattern = Pattern.compile("(\\w+)\\s*=\\s*\"([A-Z_]+)\"");
+            maskPattern = Pattern.compile("(\\w+)\\s*=\\s*\\[");
+        }
+
+        for (String line : content) {
+            Matcher categoryMatcher = categoryPattern.matcher(line);
+            if (categoryMatcher.find()) {
+                currentCategory = categoryMatcher.group(1);
+                continue;
+            }
+
+            Matcher booleanMatcher = booleanPattern.matcher(line);
+            if (booleanMatcher.find()) {
+                String key = booleanMatcher.group(1);
+                boolean value = Boolean.parseBoolean(booleanMatcher.group(2));
+
+                for (CCategory cCategory : defaults.map().keySet()) {
+                    if (cCategory.id().equals(currentCategory)) {
+                        for (CValue<?> cValue : defaults.map().get(cCategory)) {
+                            if (cValue.key.equals(key) && cValue instanceof CBoolean cBoolean) {
+                                cBoolean.set(value);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                continue;
+            }
+
+            Matcher enumMatcher = enumPattern.matcher(line);
+            if (enumMatcher.find()) {
+                String key = enumMatcher.group(1);
+                String value = enumMatcher.group(2);
+
+                for (CCategory cCategory : defaults.map().keySet()) {
+                    if (cCategory.id().equals(currentCategory)) {
+                        for (CValue<?> cValue : defaults.map().get(cCategory)) {
+                            if (cValue.key.equals(key) && cValue instanceof CEnum<?> cEnum) {
+                                cEnum.setEnumStr(value);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                continue;
+            }
+
+            Matcher maskMatcher = maskPattern.matcher(line);
+            if (maskMatcher.find()) {
+                maskKey = maskMatcher.group(1);
+                inMask = true;
+                continue;
+            }
+            Matcher maskValueMatcher = maskValuePattern.matcher(line);
+            if (inMask && maskValueMatcher.find()) {
+                String value = maskValueMatcher.group(1);
+                maskStr.add(value);
+                continue;
+            }
+            if (inMask && line.startsWith("]")) {
+                inMask = false;
+
+                for (CCategory cCategory : defaults.map().keySet()) {
+                    if (cCategory.id().equals(currentCategory)) {
+                        for (CValue<?> cValue : defaults.map().get(cCategory)) {
+                            if (cValue.key.equals(maskKey) && cValue instanceof CMask cMask) {
+                                cMask.setMaskStr(maskStr);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                continue;
+            }
+        }
+
+        return defaults;
     }
 
     public static boolean save(CMap config, String fileName, Format format) {

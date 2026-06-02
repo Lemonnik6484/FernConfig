@@ -57,8 +57,8 @@ public class FernConfig
 	{
 		LOGGER.info("Starting FernConfig...");
 
-		JSON5_CONFIG.save();
-		TOML_CONFIG.save();
+		JSON5_CONFIG.reload();
+		TOML_CONFIG.reload();
 	}
 
 	//? >=1.21.11 {
