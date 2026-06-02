@@ -1,16 +1,19 @@
 package dev.lemonnik.fern_config;
 
-//? if fabric
-import dev.lemonnik.fern_config.impl.TestJSON5Config;
-import dev.lemonnik.fern_config.impl.TestTOMLConfig;
+//? if fabric {
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
+//?}
 
-//? if forge
-//import net.minecraftforge.fml.common.Mod;
+//? if forge {
+/*import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.FMLLoader;
+*///?}
 
 //? if neoforge {
 /*import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLLoader;
 *///?}
 
 //? if >=1.21.11 {
@@ -24,6 +27,11 @@ import net.minecraft.resources.Identifier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.lemonnik.fern_config.impl.TestJSON5Config;
+import dev.lemonnik.fern_config.impl.TestTOMLConfig;
+
+import static dev.lemonnik.fern_config.FernConfig.MOD_ID;
 
 //? if forge || neoforge
 //@Mod(MOD_ID)
@@ -57,8 +65,10 @@ public class FernConfig
 	{
 		LOGGER.info("Starting FernConfig...");
 
-		JSON5_CONFIG.reload();
-		TOML_CONFIG.reload();
+		if (isDev()) {
+			JSON5_CONFIG.reload();
+			TOML_CONFIG.reload();
+		}
 	}
 
 	//? >=1.21.11 {
@@ -73,5 +83,16 @@ public class FernConfig
 		 *///?} else {
 		/*return new ResourceLocation(namespace, path);
 		*///?}
+	}
+
+	private static boolean isDev() {
+		//? if fabric
+		return FabricLoader.getInstance().isDevelopmentEnvironment();
+
+		//? if forge || (neoforge && <1.21.9)
+		//return !FMLLoader.isProduction();
+
+		//? if neoforge && >=1.21.9
+		//return !FMLLoader.getCurrent().isProduction();
 	}
 }

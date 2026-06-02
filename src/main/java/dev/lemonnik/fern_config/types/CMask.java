@@ -13,6 +13,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class CMask extends CValue<Mask> {
     private final Mask defaultMask;
     private final String maskTypeKey;

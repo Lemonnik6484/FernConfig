@@ -6,7 +6,15 @@ import dev.lemonnik.fern_config.types.CMask;
 import dev.lemonnik.fern_config.utils.CCategory;
 import dev.lemonnik.fern_config.utils.CMap;
 import dev.lemonnik.fern_config.utils.CValue;
+
+//? if fabric
 import net.fabricmc.loader.api.FabricLoader;
+
+//? if neoforge
+//import net.neoforged.fml.loading.FMLPaths;
+
+//? if forge
+//import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -155,23 +163,23 @@ public class CExporter {
         if (format == Format.JSON5) {
             sb.append("{\n");
             for (CCategory category : config.map().keySet()) {
-                sb.repeat(tab, currTab).append("/*\n");
+                sb.append(tab.repeat(currTab)).append("/*\n");
                 for (String comment : category.description()) {
-                    sb.repeat(tab, currTab).append(comment).append('\n');
+                    sb.append(tab.repeat(currTab)).append(comment).append('\n');
                 }
-                sb.repeat(tab, currTab).append("*/\n");
+                sb.append(tab.repeat(currTab)).append("*/\n");
 
-                sb.repeat(tab, currTab).append("\"").append(category.id()).append("\": {\n");
+                sb.append(tab.repeat(currTab)).append("\"").append(category.id()).append("\": {\n");
                 currTab++;
 
                 for (CValue<?> value : config.map().get(category)) {
                     for (String string : value.getExportStrings(format)) {
-                        sb.repeat(tab, currTab).append(string).append("\n");
+                        sb.append(tab.repeat(currTab)).append(string).append("\n");
                     }
                 }
 
                 currTab--;
-                sb.repeat(tab, currTab).append("},\n");
+                sb.append(tab.repeat(currTab)).append("},\n");
             }
             sb.append("}");
         } else if (format == Format.TOML) {
@@ -183,7 +191,7 @@ public class CExporter {
 
                 for (CValue<?> value : config.map().get(category)) {
                     for (String string : value.getExportStrings(format)) {
-                        sb.repeat(tab, currTab).append(string).append("\n");
+                        sb.append(tab.repeat(currTab)).append(string).append("\n");
                     }
                 }
             }
@@ -199,8 +207,12 @@ public class CExporter {
     }
 
     private static Path configPath(String fileName, Format format) {
+        //? if fabric {
         return FabricLoader.getInstance().getConfigDir()
                 .toAbsolutePath()
                 .resolve(fileName + format.extension());
+        //?} else if forge || neoforge {
+        /*return FMLPaths.CONFIGDIR.get();
+        *///?}
     }
 }
