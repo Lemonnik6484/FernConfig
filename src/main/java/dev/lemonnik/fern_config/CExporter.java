@@ -53,27 +53,8 @@ public class CExporter {
                 currTab++;
 
                 for (CValue<?> value : config.map().get(category)) {
-                    if (value instanceof CBoolean cBoolean) {
-                        sb.repeat(tab, currTab).append("// ").append(value.comment).append("\n");
-                        sb.repeat(tab, currTab).append("\"").append(cBoolean.key).append("\": ").append(cBoolean.get().toString()).append(",\n");
-                    } else if (value instanceof CEnum<?> cEnum) {
-                        sb.repeat(tab, currTab).append("/*\n");
-                        sb.repeat(tab, currTab).append(cEnum.comment).append('\n');
-                        sb.repeat(tab, currTab).append("Possible values:\n");
-                        for (Enum<?> enumValue : cEnum.getEnumClass().getEnumConstants()) {
-                            sb.repeat(tab, currTab).append("\"").append(enumValue.name()).append("\"\n");
-                        }
-                        sb.repeat(tab, currTab).append("*/\n");
-                        sb.repeat(tab, currTab).append("\"").append(cEnum.key).append("\": ").append("\"").append(cEnum.get().toString()).append("\",\n");
-                    } else if (value instanceof CMask cMask) {
-                        sb.repeat(tab, currTab).append("// ").append(cMask.comment).append("\n");
-                        sb.repeat(tab, currTab).append("\"").append(cMask.key).append("\": [\n");
-                        currTab++;
-                        for (String mask : cMask.getMaskStr()) {
-                            sb.repeat(tab, currTab).append("\"").append(mask).append("\",\n");
-                        }
-                        currTab--;
-                        sb.repeat(tab, currTab).append("],\n");
+                    for (String string : value.getExportStrings(format)) {
+                        sb.repeat(tab, currTab).append(string).append("\n");
                     }
                 }
 
@@ -89,25 +70,8 @@ public class CExporter {
                 sb.append("[").append(category.id()).append("]\n");
 
                 for (CValue<?> value : config.map().get(category)) {
-                    if (value instanceof CBoolean cBoolean) {
-                        sb.repeat(tab, currTab).append("# ").append(value.comment).append("\n");
-                        sb.repeat(tab, currTab).append(cBoolean.key).append(" = ").append(cBoolean.get().toString()).append("\n");
-                    } else if (value instanceof CEnum<?> cEnum) {
-                        sb.repeat(tab, currTab).append("# ").append(cEnum.comment).append("\n");
-                        sb.repeat(tab, currTab).append("# ").append("Possible values:\n");
-                        for (Enum<?> enumValue : cEnum.getEnumClass().getEnumConstants()) {
-                            sb.repeat(tab, currTab).append("# ").append(enumValue.name()).append("\n");
-                        }
-                        sb.repeat(tab, currTab).append(cEnum.key).append(" = \"").append(cEnum.get().toString()).append("\"\n");
-                    } else if (value instanceof CMask cMask) {
-                        sb.repeat(tab, currTab).append("# ").append(cMask.comment).append("\n");
-                        sb.repeat(tab, currTab).append(cMask.key).append(" = [\n");
-                        currTab++;
-                        for (String mask : cMask.getMaskStr()) {
-                            sb.repeat(tab, currTab).append("\"").append(mask).append("\",\n");
-                        }
-                        currTab--;
-                        sb.repeat(tab, currTab).append("]");
+                    for (String string : value.getExportStrings(format)) {
+                        sb.repeat(tab, currTab).append(string).append("\n");
                     }
                 }
             }

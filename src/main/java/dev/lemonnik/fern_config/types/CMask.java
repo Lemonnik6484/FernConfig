@@ -1,6 +1,7 @@
 package dev.lemonnik.fern_config.types;
 
 import dev.lemonnik.fern_config.CConfig;
+import dev.lemonnik.fern_config.CExporter;
 import dev.lemonnik.fern_config.utils.CValue;
 import dev.lemonnik.fern_config.utils.Mask;
 import dev.lemonnik.fern_config.utils.MaskType;
@@ -68,6 +69,29 @@ public class CMask extends CValue<Mask> {
     @Override
     public boolean isDefault() {
         return mask.getEntries().equals(defaultMask.getEntries());
+    }
+
+    @Override
+    public String[] getExportStrings(CExporter.Format format) {
+        StringBuilder sb = new StringBuilder();
+
+        if (format == CExporter.Format.JSON5) {
+            sb.append("// ").append(comment).append("\n");
+            sb.append("\"").append(key).append("\": [\n");
+            for (String mask : getMaskStr()) {
+                sb.append("    \"").append(mask).append("\",\n");
+            }
+            sb.append("],\n");
+        } else if (format == CExporter.Format.TOML) {
+            sb.append("# ").append(comment).append("\n");
+            sb.append(key).append(" = [\n");
+            for (String mask : getMaskStr()) {
+                sb.append("    \"").append(mask).append("\",\n");
+            }
+            sb.append("]");
+        }
+
+        return sb.toString().split("\n");
     }
 
     private Mask createMask(String[] maskStr) {
