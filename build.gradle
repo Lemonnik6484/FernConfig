@@ -271,7 +271,7 @@ jar {
 publishing {
     publications {
         create("maven${project.name.capitalize()}", MavenPublication) {
-            artifactId = project.mod_version
+            artifactId = project.mod_id
 
             from components.java
         }
