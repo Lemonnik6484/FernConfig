@@ -62,7 +62,7 @@ List<String> MIXIN_CONFIG_PATHS = ["fern_config.mixins.json"]
 JavaVersion JAVA_COMPATIBILITY
 JavaVersion MIXIN_COMPATIBILITY
 int javaVersion
-if (mcVersion >= 260001) { // 26.1
+if (mcVersion >= 260100) { // 26.1
     JAVA_COMPATIBILITY = JavaVersion.VERSION_25
     MIXIN_COMPATIBILITY = JavaVersion.VERSION_25
     javaVersion = 25
