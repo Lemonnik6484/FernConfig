@@ -23,7 +23,7 @@
 - [ ] Ingame config editing screen
 - [ ] Server-side datadriven config menu on new versions
 - [ ] Auto register config-related commands
-- [ ] Make a good wiki
+- [ ] Make a proper wiki
 
 ### For developers:
 
