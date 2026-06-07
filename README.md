@@ -1,5 +1,10 @@
 # Fern Config is a very simple config library
 
+[![fabric](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/supported/fabric_vector.svg)](https://modrinth.com/mod/fern-config/versions?l=fabric)
+[![forge](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/supported/forge_vector.svg)](https://modrinth.com/mod/fern-config/versions?l=forge)
+[![quilt](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/supported/quilt_vector.svg)](https://modrinth.com/mod/fern-config/versions?l=quilt)
+[![neoforge](https://raw.githubusercontent.com/Hyperbole-Devs/vectors/8494ec1ac495cfb481dc7e458356325510933eb0/assets/compact/supported/neoforge_vector.svg)](https://modrinth.com/mod/fern-config/versions?l=neoforge)
+
 ## Note: Fern Config is still WIP and doesn't include much features
 
 ### Feature roadmap:
