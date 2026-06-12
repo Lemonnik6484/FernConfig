@@ -36,8 +36,7 @@
 ```groovy
 maven {
     name "lemonnik's maven"
-    url "http://lemonnik.ddns.net:16555/releases"
-    allowInsecureProtocol = true
+    url "http://maven.lemonnik.dev/releases"
 }
 ```
 
