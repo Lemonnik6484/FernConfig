@@ -4,9 +4,9 @@ import dev.lemonnik.fern_config.types.*;
 import dev.lemonnik.fern_config.utils.CCategory;
 import dev.lemonnik.fern_config.utils.CMap;
 import dev.lemonnik.fern_config.utils.CValue;
+import dev.lemonnik.fern_config.utils.MaskType;
 
 //? if fabric
-import dev.lemonnik.fern_config.utils.MaskType;
 import net.fabricmc.loader.api.FabricLoader;
 
 //? if neoforge
@@ -18,8 +18,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
