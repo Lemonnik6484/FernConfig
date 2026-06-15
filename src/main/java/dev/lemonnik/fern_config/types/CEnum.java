@@ -58,7 +58,7 @@ public class CEnum<T extends Enum<T>> extends CValue<T> {
             for (Enum<?> enumValue : getEnumClass().getEnumConstants()) {
                 sb.append("# ").append(enumValue.name()).append("\n");
             }
-            sb.append(key).append(" = \"").append(get().toString()).append("\",\n");
+            sb.append(key).append(" = \"").append(get().toString()).append("\"\n");
         }
 
         return sb.toString().split("\n");

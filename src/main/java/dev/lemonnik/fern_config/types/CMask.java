@@ -93,6 +93,7 @@ public class CMask extends CValue<Mask> {
             for (String line : maskType.getExportStrings(format)) {
                 sb.append("    ").append(line).append("\n");
             }
+            sb.delete(sb.length() - 1, sb.length()).append(",\n");
 
             sb.append("    ").append("values").append(" = [\n");
             for (String mask : getMaskStr()) {
