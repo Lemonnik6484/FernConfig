@@ -2,7 +2,6 @@ package dev.lemonnik.fern_config.types;
 
 import dev.lemonnik.fern_config.CExporter;
 import dev.lemonnik.fern_config.utils.CValue;
-import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -32,7 +31,7 @@ public class CString extends CValue<String> {
         return Objects.equals(value, defaultValue);
     }
 
-    private static String escape(@NonNull String input) {
+    private static String escape(String input) {
         return input
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"")
