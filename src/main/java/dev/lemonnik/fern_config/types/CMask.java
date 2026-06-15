@@ -119,7 +119,7 @@ public class CMask extends CValue<Mask> {
         //? if >1.19.2 {
         return new Mask(BuiltInRegistries.BLOCK, maskType.get(), maskStr);
         //?} else {
-        /*return new Mask(Registry.BLOCK, maskType, maskStr);
+        /*return new Mask(Registry.BLOCK, maskType.get(), maskStr);
         *///?}
     }
 }
