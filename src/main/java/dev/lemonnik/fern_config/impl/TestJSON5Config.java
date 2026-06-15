@@ -5,6 +5,7 @@ import dev.lemonnik.fern_config.CExporter;
 import dev.lemonnik.fern_config.FernConfig;
 import dev.lemonnik.fern_config.types.CBoolean;
 import dev.lemonnik.fern_config.types.CEnum;
+import dev.lemonnik.fern_config.types.CInteger;
 import dev.lemonnik.fern_config.types.CMask;
 import dev.lemonnik.fern_config.utils.CCategory;
 import dev.lemonnik.fern_config.utils.MaskType;
@@ -25,6 +26,8 @@ public class TestJSON5Config extends CConfig {
 
     public final CBoolean default_true = register(BASIC_THINGS, new CBoolean("true_by_default", "This boolean's default is 'true'", true));
     public final CBoolean default_false = register(BASIC_THINGS, new CBoolean("false_by_default", "This boolean's default is 'false'", false));
+
+    public final CInteger cool_int = register(BASIC_THINGS, new CInteger("cool_integer", "This is just a number", 67));
 
 
     private static final CCategory COMPLEX_THINGS = CCategory.of("complex_category", "Unbasic values", "read carefully");

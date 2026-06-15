@@ -3,28 +3,23 @@ package dev.lemonnik.fern_config.types;
 import dev.lemonnik.fern_config.CExporter;
 import dev.lemonnik.fern_config.utils.CValue;
 
-public class CBoolean extends CValue<Boolean> {
-    private final boolean defaultValue;
-    private Boolean value;
+public class CInteger extends CValue<Integer> {
+    private final int defaultValue;
+    private int value;
 
-    public CBoolean(String key, String comment, boolean defaultValue) {
+    public CInteger(String key, String comment, int defaultValue) {
         super(key, comment);
-
-        this.value = defaultValue;
         this.defaultValue = defaultValue;
-    }
-
-    public void toggle() {
-        this.value = !value;
+        this.value = defaultValue;
     }
 
     @Override
-    public Boolean get() {
+    public Integer get() {
         return value;
     }
 
     @Override
-    public void set(Boolean value) {
+    public void set(Integer value) {
         this.value = value;
     }
 
@@ -50,6 +45,6 @@ public class CBoolean extends CValue<Boolean> {
 
     @Override
     public String prefix() {
-        return "B";
+        return "I";
     }
 }

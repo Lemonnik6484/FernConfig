@@ -17,7 +17,7 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class CMask extends CValue<Mask> {
     private final Mask defaultMask;
-    private List<String> maskStr = new ArrayList<>();
+    private List<String> maskStr;
     private Mask mask;
     private CEnum<MaskType> maskType;
 

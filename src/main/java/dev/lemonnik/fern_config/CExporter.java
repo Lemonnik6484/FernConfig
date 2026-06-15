@@ -2,6 +2,7 @@ package dev.lemonnik.fern_config;
 
 import dev.lemonnik.fern_config.types.CBoolean;
 import dev.lemonnik.fern_config.types.CEnum;
+import dev.lemonnik.fern_config.types.CInteger;
 import dev.lemonnik.fern_config.types.CMask;
 import dev.lemonnik.fern_config.utils.CCategory;
 import dev.lemonnik.fern_config.utils.CMap;
@@ -79,31 +80,42 @@ public class CExporter {
 
                 String prefix = key.split("_")[0];
 
-                switch (prefix) {
-                    case "B": {
-                        if (config.getValue(key) instanceof CBoolean cBoolean) {
-                            cBoolean.set(Boolean.parseBoolean(value));
-                        }
-                        break;
-                    }
-                    case "E": {
-                        value = value.substring(1, value.length() - 1);
-                        if (!maskKey.isEmpty()) {
-                            if (config.getValue(maskKey) instanceof CMask cMask) {
-                                cMask.setMaskType(MaskType.fromString(value));
-                                break;
+                try {
+                    switch (prefix) {
+                        case "B": {
+                            if (config.getValue(key) instanceof CBoolean cBoolean) {
+                                cBoolean.set(Boolean.parseBoolean(value));
                             }
+                            break;
                         }
+                        case "E": {
+                            value = value.substring(1, value.length() - 1);
+                            if (!maskKey.isEmpty()) {
+                                if (config.getValue(maskKey) instanceof CMask cMask) {
+                                    cMask.setMaskType(MaskType.fromString(value));
+                                    break;
+                                }
+                            }
 
-                        if (config.getValue(key) instanceof CEnum<?> cEnum) {
-                            cEnum.setEnumStr(value);
+                            if (config.getValue(key) instanceof CEnum<?> cEnum) {
+                                cEnum.setEnumStr(value);
+                            }
+                            break;
                         }
-                        break;
+                        case "M": {
+                            maskKey = key;
+                            break;
+                        }
+                        case "I": {
+                            if (config.getValue(key) instanceof CInteger cInteger) {
+                                cInteger.set(Integer.parseInt(value));
+                            }
+                            break;
+                        }
                     }
-                    case "M": {
-                        maskKey = key;
-                        break;
-                    }
+                } catch (Exception e) {
+                    FernConfig.LOGGER.warn("Error reading config file: {}", fileName);
+                    e.printStackTrace();
                 }
             }
         }
