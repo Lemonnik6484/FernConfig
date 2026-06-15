@@ -17,7 +17,7 @@
 - [ ] Item Mask
 - [ ] Entity Mask
 - [ ] String
-- [ ] Integer
+- [X] Integer
 - [ ] Float
 - [ ] Color
 - [ ] Double
