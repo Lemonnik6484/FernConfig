@@ -13,15 +13,15 @@
 - [X] TOML save format
 - [X] Boolean
 - [X] Enum
-- [X] Block Mask
+- [X] Block entity Mask
+- [ ] Block Mask
 - [ ] Item Mask
 - [ ] Entity Mask
 - [ ] String
 - [X] Integer
 - [X] Float
-- [ ] Double
+- [X] Double
 - [ ] Color
-- [ ] Double
 - [ ] Arrays
 - [ ] YAML save format
 - [ ] JSON save format

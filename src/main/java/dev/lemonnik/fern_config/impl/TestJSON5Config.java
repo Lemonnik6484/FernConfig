@@ -26,7 +26,9 @@ public class TestJSON5Config extends CConfig {
 
     public final CInteger cool_int = register(BASIC_THINGS, new CInteger("cool_integer", "This is just a number", 67));
 
-    public final CFloat floaty = register(BASIC_THINGS, new CFloat("nice_float", "This is just a number", 123.69F));
+    public final CFloat floaty = register(BASIC_THINGS, new CFloat("nice_float", "This is a float", 123.69F));
+
+    public final CDouble double_shmouble = register(BASIC_THINGS, new CDouble("doubly", "This is a double", 666.666D));
 
 
     private static final CCategory COMPLEX_THINGS = CCategory.of("complex_category", "Unbasic values", "read carefully");
