@@ -6,7 +6,7 @@ public abstract class CValue<T> {
     public final String key;
     public final String comment;
 
-    protected CValue(String key, String comment) {
+    public CValue(String key, String comment) {
         this.key = prefix() + "_" + key;
         this.comment = comment;
     }

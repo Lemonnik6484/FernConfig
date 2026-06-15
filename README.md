@@ -18,7 +18,8 @@
 - [ ] Entity Mask
 - [ ] String
 - [X] Integer
-- [ ] Float
+- [X] Float
+- [ ] Double
 - [ ] Color
 - [ ] Double
 - [ ] Arrays

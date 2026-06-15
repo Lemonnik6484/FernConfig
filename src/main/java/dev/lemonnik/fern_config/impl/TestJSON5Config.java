@@ -3,10 +3,7 @@ package dev.lemonnik.fern_config.impl;
 import dev.lemonnik.fern_config.CConfig;
 import dev.lemonnik.fern_config.CExporter;
 import dev.lemonnik.fern_config.FernConfig;
-import dev.lemonnik.fern_config.types.CBoolean;
-import dev.lemonnik.fern_config.types.CEnum;
-import dev.lemonnik.fern_config.types.CInteger;
-import dev.lemonnik.fern_config.types.CMask;
+import dev.lemonnik.fern_config.types.*;
 import dev.lemonnik.fern_config.utils.CCategory;
 import dev.lemonnik.fern_config.utils.MaskType;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +26,12 @@ public class TestJSON5Config extends CConfig {
 
     public final CInteger cool_int = register(BASIC_THINGS, new CInteger("cool_integer", "This is just a number", 67));
 
+    public final CFloat floaty = register(BASIC_THINGS, new CFloat("nice_float", "This is just a number", 123.69F));
+
 
     private static final CCategory COMPLEX_THINGS = CCategory.of("complex_category", "Unbasic values", "read carefully");
+
+    public final CEnum<TestEnum> test_enum = register(COMPLEX_THINGS, new CEnum<>("thats_enum", "Only values listed above this comment are acceptable", TestEnum.class, TestEnum.TASTY_ENUM));
 
     public final CMask block_mask_itself = register(COMPLEX_THINGS, new CMask(
             "block_mask",

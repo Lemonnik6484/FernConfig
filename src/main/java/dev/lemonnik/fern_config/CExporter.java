@@ -1,9 +1,6 @@
 package dev.lemonnik.fern_config;
 
-import dev.lemonnik.fern_config.types.CBoolean;
-import dev.lemonnik.fern_config.types.CEnum;
-import dev.lemonnik.fern_config.types.CInteger;
-import dev.lemonnik.fern_config.types.CMask;
+import dev.lemonnik.fern_config.types.*;
 import dev.lemonnik.fern_config.utils.CCategory;
 import dev.lemonnik.fern_config.utils.CMap;
 import dev.lemonnik.fern_config.utils.CValue;
@@ -111,6 +108,11 @@ public class CExporter {
                                 cInteger.set(Integer.parseInt(value));
                             }
                             break;
+                        }
+                        case "F": {
+                            if (config.getValue(key) instanceof CFloat cFloat) {
+                                cFloat.set(Float.parseFloat(value));
+                            }
                         }
                     }
                 } catch (Exception e) {
