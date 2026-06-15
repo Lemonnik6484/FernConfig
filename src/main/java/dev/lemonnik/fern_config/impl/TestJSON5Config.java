@@ -30,6 +30,8 @@ public class TestJSON5Config extends CConfig {
 
     public final CDouble double_shmouble = register(BASIC_THINGS, new CDouble("doubly", "This is a double", 666.666D));
 
+    public final CString text = register(BASIC_THINGS, new CString("text_example", "This is a string, you can write text here!", "Lorem ipsum, dolor sit amet"));
+
 
     private static final CCategory COMPLEX_THINGS = CCategory.of("complex_category", "Unbasic values", "read carefully");
 

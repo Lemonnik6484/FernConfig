@@ -119,6 +119,11 @@ public class CExporter {
                                 cDouble.set(Double.parseDouble(value));
                             }
                         }
+                        case "S": {
+                            if (config.getValue(key) instanceof CString cString) {
+                                cString.set(value.substring(1, value.length() - 1));
+                            }
+                        }
                     }
                 } catch (Exception e) {
                     FernConfig.LOGGER.warn("Error reading config file: {}", fileName);

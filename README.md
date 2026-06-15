@@ -17,7 +17,7 @@
 - [ ] Block Mask
 - [ ] Item Mask
 - [ ] Entity Mask
-- [ ] String
+- [X] String
 - [X] Integer
 - [X] Float
 - [X] Double
