@@ -7,14 +7,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public abstract class CConfig {
-    private final CMap categories = new CMap();
+    private final CMap cMap = new CMap();
 
     protected <T extends CValue<?>> T register(CCategory category, T value) {
-        List<CValue<?>> values = categories.map().computeIfAbsent(category, k -> new ArrayList<>());
+        List<CValue<?>> values = cMap.map().computeIfAbsent(category, k -> new ArrayList<>());
         for (int i = 0; i < values.size(); i++) {
             if (Objects.equals(values.get(i).key, value.key)) {
                 values.set(i, value);
@@ -25,22 +24,31 @@ public abstract class CConfig {
         return value;
     }
 
-    public Map<CCategory, List<CValue<?>>> getCategories() {
-        return categories.map();
+    public CMap getcMap() {
+        return cMap;
     }
 
     public List<CValue<?>> getValues(CCategory category) {
-        return categories.map().get(category);
+        return cMap.map().get(category);
     }
 
     public abstract @NotNull String getFileName();
 
     protected abstract @NotNull CExporter.Format getFormat();
 
+    public CValue<?> getValue(CCategory category, String key) {
+        for (CValue<?> value : getValues(category)) {
+            if (value.key.equals(key)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
     public CValue<?> getValue(String key) {
-        for (List<CValue<?>> values : categories.map().values()) {
+        for (List<CValue<?>> values : cMap.map().values()) {
             for (CValue<?> value : values) {
-                if (Objects.equals(value.key, key)) {
+                if (value.key.equals(key)) {
                     return value;
                 }
             }
@@ -49,9 +57,9 @@ public abstract class CConfig {
     }
 
     public boolean reload() {
-        CMap loaded = CExporter.load(categories, getFileName(), getFormat());
+        CMap loaded = CExporter.load(this, getFileName(), getFormat());
         if (!loaded.map().isEmpty()) {
-            this.categories.map().putAll(loaded.map());
+            this.cMap.map().putAll(loaded.map());
             return CExporter.save(loaded, getFileName(), getFormat());
         } else {
             return false;
@@ -59,6 +67,6 @@ public abstract class CConfig {
     }
 
     public boolean save() {
-        return CExporter.save(categories, getFileName(), getFormat());
+        return CExporter.save(cMap, getFileName(), getFormat());
     }
 }

@@ -7,7 +7,7 @@ public abstract class CValue<T> {
     public final String comment;
 
     protected CValue(String key, String comment) {
-        this.key = key;
+        this.key = prefix() + "_" + key;
         this.comment = comment;
     }
 
@@ -17,4 +17,6 @@ public abstract class CValue<T> {
     public abstract boolean isDefault();
 
     public abstract String[] getExportStrings(CExporter.Format format);
+
+    public abstract String prefix();
 }

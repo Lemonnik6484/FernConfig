@@ -11,27 +11,23 @@ import net.minecraft.core.registries.BuiltInRegistries;
 /*import net.minecraft.core.Registry;
 *///?}
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class CMask extends CValue<Mask> {
     private final Mask defaultMask;
-    private final String maskTypeKey;
-    private String[] maskStr;
+    private List<String> maskStr = new ArrayList<>();
     private Mask mask;
-    private MaskType maskType;
+    private CEnum<MaskType> maskType;
 
-    public CMask(String key, String comment, String maskTypeKey, CConfig config, String... maskStr) {
+    public CMask(String key, String comment, CEnum<MaskType> maskTypeCEnum, CConfig config, String... maskStr) {
         super(key, comment);
 
-        this.maskStr = maskStr;
-        CValue<?> cValue = config.getValue(maskTypeKey);
-        if (cValue instanceof CEnum<?> cEnum && cEnum.getEnumClass() == MaskType.class) {
-            maskType = (MaskType) cEnum.get();
-        }
+        this.maskStr = List.of(maskStr);
+        this.maskType = maskTypeCEnum;
         this.defaultMask = createMask(maskStr);
         this.mask = createMask(maskStr);
-        this.maskTypeKey = maskTypeKey;
     }
 
     @Override
@@ -39,27 +35,27 @@ public class CMask extends CValue<Mask> {
         return mask;
     }
 
-    public String[] getMaskStr() {
+    public List<String> getMaskStr() {
         return maskStr;
     }
 
     public void setMaskStr(String[] maskStr) {
-        this.maskStr = maskStr;
+        this.maskStr = List.of(maskStr);
         this.mask = createMask(maskStr);
     }
 
     public void setMaskStr(List<String> maskStr) {
-        this.maskStr = maskStr.toArray(new String[0]);
+        this.maskStr = maskStr;
         this.mask = createMask(maskStr);
+    }
+
+    public void addMaskStr(String string) {
+        maskStr.add(string);
     }
 
     public void setMaskType(MaskType maskType) {
-        this.maskType = maskType;
+        this.maskType.set(maskType);
         this.mask = createMask(maskStr);
-    }
-
-    public String getMaskTypeKey() {
-        return maskTypeKey;
     }
 
     @Override
@@ -78,21 +74,40 @@ public class CMask extends CValue<Mask> {
 
         if (format == CExporter.Format.JSON5) {
             sb.append("// ").append(comment).append("\n");
-            sb.append("\"").append(key).append("\": [\n");
-            for (String mask : getMaskStr()) {
-                sb.append("    \"").append(mask).append("\",\n");
+            sb.append("\"").append(key).append("\": {\n");
+
+            for (String line : maskType.getExportStrings(format)) {
+                sb.append("    ").append(line).append("\n");
             }
-            sb.append("],\n");
+
+            sb.append("    ").append("\"values\"").append(": [\n");
+            for (String mask : getMaskStr()) {
+                sb.append("        \"").append(mask).append("\",\n");
+            }
+            sb.append("    ").append("],\n");
+            sb.append("}");
         } else if (format == CExporter.Format.TOML) {
             sb.append("# ").append(comment).append("\n");
-            sb.append(key).append(" = [\n");
-            for (String mask : getMaskStr()) {
-                sb.append("    \"").append(mask).append("\",\n");
+            sb.append(key).append(" = {\n");
+
+            for (String line : maskType.getExportStrings(format)) {
+                sb.append("    ").append(line).append("\n");
             }
-            sb.append("]");
+
+            sb.append("    ").append("values").append(" = [\n");
+            for (String mask : getMaskStr()) {
+                sb.append("        \"").append(mask).append("\",\n");
+            }
+            sb.append("    ").append("],\n");
+            sb.append("}");
         }
 
         return sb.toString().split("\n");
+    }
+
+    @Override
+    public String prefix() {
+        return "M";
     }
 
     private Mask createMask(String[] maskStr) {
@@ -101,7 +116,7 @@ public class CMask extends CValue<Mask> {
 
     private Mask createMask(List<String> maskStr) {
         //? if >1.19.2 {
-        return new Mask(BuiltInRegistries.BLOCK, maskType, maskStr);
+        return new Mask(BuiltInRegistries.BLOCK, maskType.get(), maskStr);
         //?} else {
         /*return new Mask(Registry.BLOCK, maskType, maskStr);
         *///?}

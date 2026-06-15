@@ -4,6 +4,7 @@ import dev.lemonnik.fern_config.CExporter;
 import dev.lemonnik.fern_config.utils.CValue;
 
 public class CBoolean extends CValue<Boolean> {
+    private static final String PREFIX = "B";
     private final boolean defaultValue;
     private Boolean value;
 
@@ -46,5 +47,10 @@ public class CBoolean extends CValue<Boolean> {
         }
 
         return sb.toString().split("\n");
+    }
+
+    @Override
+    public String prefix() {
+        return "B";
     }
 }
