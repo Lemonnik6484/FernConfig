@@ -21,7 +21,6 @@
 - [X] Integer
 - [X] Float
 - [X] Double
-- [ ] Color
 - [ ] Arrays
 - [ ] YAML save format
 - [ ] JSON save format
