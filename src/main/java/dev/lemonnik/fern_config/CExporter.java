@@ -87,12 +87,12 @@ public class CExporter {
                     String arrayType = arrayKey.split("_")[1];
 
                     switch (arrayType) {
-                        case "I": {
-                            if (config.getValue(arrayKey) instanceof CIntArray cIntArray) {
-                                List<Integer> ints = currentList.stream()
-                                        .map(Integer::parseInt)
+                        case "F": {
+                            if (config.getValue(arrayKey) instanceof CFloatArray cFloatArray) {
+                                List<Float> floats = currentList.stream()
+                                        .map(Float::parseFloat)
                                         .toList();
-                                cIntArray.set(new IntArray(ints));
+                                cFloatArray.set(new FloatArray(floats));
                                 currentList.clear();
                             }
                             break;

@@ -18,7 +18,7 @@
 - [X] Integer
 - [X] Float
 - [X] Double
-- [ ] Arrays
+- [X] Float array
 - [ ] YAML save format
 - [ ] Separate folder possibility for configs
 - [ ] Ingame config editing screen

@@ -2,27 +2,27 @@ package dev.lemonnik.fern_config.types;
 
 import dev.lemonnik.fern_config.CExporter;
 import dev.lemonnik.fern_config.utils.CValue;
-import dev.lemonnik.fern_config.utils.IntArray;
+import dev.lemonnik.fern_config.utils.FloatArray;
 
 import java.util.Objects;
 
-public class CIntArray extends CValue<IntArray> {
-    private final IntArray defaultValues;
-    private IntArray values;
+public class CFloatArray extends CValue<FloatArray> {
+    private final FloatArray defaultValues;
+    private FloatArray values;
 
-    public CIntArray(String key, String comment, IntArray defaultValues) {
+    public CFloatArray(String key, String comment, FloatArray defaultValues) {
         super(key, comment);
         this.defaultValues = defaultValues;
         this.values = defaultValues;
     }
 
     @Override
-    public IntArray get() {
+    public FloatArray get() {
         return values;
     }
 
     @Override
-    public void set(IntArray values) {
+    public void set(FloatArray values) {
         this.values = values;
     }
 
@@ -38,14 +38,14 @@ public class CIntArray extends CValue<IntArray> {
         if (format == CExporter.Format.JSON5) {
             sb.append("// ").append(comment).append("\n");
             sb.append("\"").append(key).append("\": [\n");
-            for (int value : values.values()) {
+            for (float value : values.values()) {
                 sb.append("    ").append(value).append(",\n");
             }
             sb.append("],\n");
         } else if (format == CExporter.Format.TOML) {
             sb.append("# ").append(comment).append("\n");
             sb.append(key).append(" = [\n");
-            for (int value : values.values()) {
+            for (float value : values.values()) {
                 sb.append("    ").append(value).append(",\n");
             }
             sb.append("]\n");
@@ -56,6 +56,6 @@ public class CIntArray extends CValue<IntArray> {
 
     @Override
     public String prefix() {
-        return "A_I";
+        return "A_F";
     }
 }
