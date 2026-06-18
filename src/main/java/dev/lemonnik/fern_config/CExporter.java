@@ -2,6 +2,7 @@ package dev.lemonnik.fern_config;
 
 import dev.lemonnik.fern_config.types.*;
 import dev.lemonnik.fern_config.utils.*;
+import org.jetbrains.annotations.NotNull;
 
 //? if fabric
 import net.fabricmc.loader.api.FabricLoader;
@@ -37,10 +38,22 @@ public class CExporter {
         }
     }
 
-    public static CMap load(CConfig config, String fileName, Format format) {
-        Path path = configPath(fileName, format);
+    public static CConfig load(CConfig config, String fileName, Format format) {
+        Path path = configPath(config);
         String[] content;
-        CMap defaultMap = config.getcMap();
+
+        CConfig defaultConfig = new CConfig() {
+            @Override
+            public @NotNull String getFileName() {
+                return fileName;
+            }
+
+            @Override
+            protected @NotNull CExporter.Format getFormat() {
+                return format;
+            }
+        };
+        defaultConfig.getcMap().map().putAll(config.getcMap().map());
 
         ArrayList<String> currentList = new ArrayList<>();
 
@@ -187,19 +200,21 @@ public class CExporter {
         } catch (Exception e) {
             if (e instanceof NoSuchFileException) {
                 FernConfig.LOGGER.warn("Config file {}{} not found, falling back to defaults", fileName, format.extension());
-                return defaultMap;
+                return defaultConfig;
             }
 
             FernConfig.LOGGER.error("Error reading config file: {}", fileName);
             e.printStackTrace();
-            return defaultMap;
+            return defaultConfig;
         }
 
-        return defaultMap;
+        return defaultConfig;
     }
 
-    public static boolean save(CMap config, String fileName, Format format) {
-        Path path = configPath(fileName, format);
+    public static boolean save(CConfig config) {
+        CMap map = config.getcMap();
+        Format format = config.getFormat();
+        Path path = configPath(config);
         StringBuilder sb = new StringBuilder();
         String tab = "    ";
         int currTab = 1;
@@ -207,7 +222,7 @@ public class CExporter {
         
         if (format == Format.JSON5) {
             sb.append("{\n");
-            for (CCategory category : config.map().keySet()) {
+            for (CCategory category : map.map().keySet()) {
                 sb.append(tab.repeat(currTab)).append("/*\n");
                 for (String comment : category.description()) {
                     sb.append(tab.repeat(currTab)).append(comment).append('\n');
@@ -217,7 +232,7 @@ public class CExporter {
                 sb.append(tab.repeat(currTab)).append("\"").append(category.id()).append("\": {\n");
                 currTab++;
 
-                for (CValue<?> value : config.map().get(category)) {
+                for (CValue<?> value : map.map().get(category)) {
                     for (String string : value.getExportStrings(format)) {
                         sb.append(tab.repeat(currTab)).append(string).append("\n");
                     }
@@ -228,13 +243,13 @@ public class CExporter {
             }
             sb.append("}");
         } else if (format == Format.TOML) {
-            for (CCategory category : config.map().keySet()) {
+            for (CCategory category : map.map().keySet()) {
                 for (String comment : category.description()) {
                     sb.append("# ").append(comment).append("\n");
                 }
                 sb.append("[").append(category.id()).append("]\n");
 
-                for (CValue<?> value : config.map().get(category)) {
+                for (CValue<?> value : map.map().get(category)) {
                     for (String string : value.getExportStrings(format)) {
                         sb.append(tab.repeat(currTab)).append(string).append("\n");
                     }
@@ -251,7 +266,10 @@ public class CExporter {
         }
     }
 
-    private static Path configPath(String fileName, Format format) {
+    private static Path configPath(CConfig config) {
+        String fileName = config.getFileName();
+        Format format = config.getFormat();
+
         //? if fabric {
         return FabricLoader.getInstance().getConfigDir()
                 .toAbsolutePath()

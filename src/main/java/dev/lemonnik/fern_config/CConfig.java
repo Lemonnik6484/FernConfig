@@ -57,16 +57,16 @@ public abstract class CConfig {
     }
 
     public boolean reload() {
-        CMap loaded = CExporter.load(this, getFileName(), getFormat());
-        if (!loaded.map().isEmpty()) {
-            this.cMap.map().putAll(loaded.map());
-            return CExporter.save(loaded, getFileName(), getFormat());
+        CConfig config = CExporter.load(this, getFileName(), getFormat());
+        if (!config.getcMap().map().isEmpty()) {
+            this.cMap.map().putAll(config.getcMap().map());
+            return CExporter.save(this);
         } else {
             return false;
         }
     }
 
     public boolean save() {
-        return CExporter.save(cMap, getFileName(), getFormat());
+        return CExporter.save(this);
     }
 }
