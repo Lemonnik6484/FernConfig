@@ -19,7 +19,6 @@
 - [X] Float
 - [X] Double
 - [X] Float array
-- [ ] YAML save format
 - [ ] Separate folder possibility for configs
 - [ ] Ingame config editing screen
 - [ ] Server-side datadriven config menu on new versions
