@@ -6,6 +6,8 @@ import dev.lemonnik.fern_config.utils.Mask;
 import dev.lemonnik.fern_config.utils.MaskType;
 import net.minecraft.core.Registry;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -38,10 +40,6 @@ public class CMask extends CValue<Mask> {
     public void setMaskStr(List<String> maskStr) {
         this.maskStr = maskStr;
         this.mask = createMask(maskStr);
-    }
-
-    public void addMaskStr(String string) {
-        maskStr.add(string);
     }
 
     public void setMaskType(MaskType maskType) {

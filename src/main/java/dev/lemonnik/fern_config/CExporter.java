@@ -1,10 +1,7 @@
 package dev.lemonnik.fern_config;
 
 import dev.lemonnik.fern_config.types.*;
-import dev.lemonnik.fern_config.utils.CCategory;
-import dev.lemonnik.fern_config.utils.CMap;
-import dev.lemonnik.fern_config.utils.CValue;
-import dev.lemonnik.fern_config.utils.MaskType;
+import dev.lemonnik.fern_config.utils.*;
 
 //? if fabric
 import net.fabricmc.loader.api.FabricLoader;
@@ -18,6 +15,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,11 +42,144 @@ public class CExporter {
         String[] content;
         CMap defaultMap = config.getcMap();
 
+        ArrayList<String> currentList = new ArrayList<>();
+
         String maskKey = "";
+        boolean inMaskValues =  false;
+
         String arrayKey = "";
-        // TODO: fix strings, mask values, array values
+
         try {
             content = Files.readAllLines(path).toArray(new String[0]);
+
+            Pattern valuePattern = Pattern.compile("\"?([^\"\\s=]+)\"?\\s*[:=]\\s*([^,]+)");
+
+            for (String line : content) {
+                line = line.trim();
+                System.out.println(line);
+
+                if (!maskKey.isEmpty() && line.startsWith("}")) {
+                    maskKey = "";
+                    continue;
+                }
+
+                if (inMaskValues && line.startsWith("]")) {
+                    inMaskValues = false;
+                    if (config.getValue(maskKey) instanceof CMask cMask) {
+                        cMask.setMaskStr(currentList);
+                    }
+                    continue;
+                }
+
+                if (!arrayKey.isEmpty() && line.startsWith("]")) {
+                    String arrayType = arrayKey.split("_")[1];
+                    arrayKey = "";
+
+                    switch (arrayType) {
+                        case "I": {
+                            if (config.getValue(arrayKey) instanceof CIntArray cIntArray) {
+                                List<Integer> ints = currentList.stream()
+                                        .map(Integer::parseInt)
+                                        .toList();
+                                cIntArray.set(new IntArray(ints));
+                            }
+                            break;
+                        }
+                    }
+                    continue;
+                }
+
+                if (Objects.equals(line, "\"values\": [") || Objects.equals(line, "values = [")) {
+                    inMaskValues = true;
+                }
+
+                if (!maskKey.isEmpty() && (line.startsWith("\"") && line.endsWith("\","))) {
+                    if (inMaskValues) {
+                        line = line.split("\"")[1];
+                        currentList.add(line);
+                        continue;
+                    }
+                }
+
+                if (!arrayKey.isEmpty()) {
+                    String arrayType = arrayKey.split("_")[1];
+
+                    switch (arrayType) {
+                        case "I": {
+                            currentList.add(line.substring(0, line.length() - 1));
+                            break;
+                        }
+                    }
+                }
+
+                Matcher valueMatcher = valuePattern.matcher(line);
+                if (valueMatcher.find()) {
+                    String key = valueMatcher.group(1);
+                    String value = valueMatcher.group(2);
+
+                    String prefix = key.split("_")[0];
+
+                    try {
+                        switch (prefix) {
+                            case "B": {
+                                if (config.getValue(key) instanceof CBoolean cBoolean) {
+                                    cBoolean.set(Boolean.parseBoolean(value));
+                                }
+                                break;
+                            }
+                            case "E": {
+                                value = value.substring(1, value.length() - 1);
+                                if (!maskKey.isEmpty()) {
+                                    if (config.getValue(maskKey) instanceof CMask cMask) {
+                                        cMask.setMaskType(MaskType.fromString(value));
+                                        break;
+                                    }
+                                }
+
+                                if (config.getValue(key) instanceof CEnum<?> cEnum) {
+                                    cEnum.setEnumStr(value);
+                                }
+                                break;
+                            }
+                            case "M": {
+                                maskKey = key;
+                                break;
+                            }
+                            case "I": {
+                                if (config.getValue(key) instanceof CInteger cInteger) {
+                                    cInteger.set(Integer.parseInt(value));
+                                }
+                                break;
+                            }
+                            case "F": {
+                                if (config.getValue(key) instanceof CFloat cFloat) {
+                                    cFloat.set(Float.parseFloat(value));
+                                }
+                                break;
+                            }
+                            case "D": {
+                                if (config.getValue(key) instanceof CDouble cDouble) {
+                                    cDouble.set(Double.parseDouble(value));
+                                }
+                                break;
+                            }
+                            case "S": {
+                                if (config.getValue(key) instanceof CString cString) {
+                                    cString.set(value.substring(1, value.length() - 1));
+                                }
+                                break;
+                            }
+                            case "A": {
+                                arrayKey = key;
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        FernConfig.LOGGER.warn("Error reading config file: {}", fileName);
+                        e.printStackTrace();
+                    }
+                }
+            }
         } catch (Exception e) {
             if (e instanceof NoSuchFileException) {
                 FernConfig.LOGGER.warn("Config file {}{} not found, falling back to defaults", fileName, format.extension());
@@ -57,101 +189,6 @@ public class CExporter {
             FernConfig.LOGGER.error("Error reading config file: {}", fileName);
             e.printStackTrace();
             return defaultMap;
-        }
-
-        Pattern valuePattern = Pattern.compile("\"?([^\"\\s=]+)\"?\\s*[:=]\\s*([^,]+)");
-
-        for (String line : content) {
-            if (!maskKey.isEmpty() && Objects.equals(line, "],")) {
-                maskKey = "";
-                continue;
-            }
-
-            if (!arrayKey.isEmpty() && Objects.equals(line, "],")) {
-                arrayKey = "";
-                continue;
-            }
-
-            if (!maskKey.isEmpty() && (line.startsWith("\"") && line.endsWith("\","))) {
-                if (config.getValue(maskKey) instanceof CMask cMask) {
-                    line = line.substring(1, line.length() - 2);
-                    cMask.addMaskStr(line);
-                    continue;
-                }
-            }
-
-            Matcher valueMatcher = valuePattern.matcher(line);
-            if (valueMatcher.find()) {
-                String key = valueMatcher.group(1);
-                String value = valueMatcher.group(2);
-
-                String prefix = key.split("_")[0];
-
-                try {
-                    switch (prefix) {
-                        case "B": {
-                            if (config.getValue(key) instanceof CBoolean cBoolean) {
-                                cBoolean.set(Boolean.parseBoolean(value));
-                            }
-                            break;
-                        }
-                        case "E": {
-                            value = value.substring(1, value.length() - 1);
-                            if (!maskKey.isEmpty()) {
-                                if (config.getValue(maskKey) instanceof CMask cMask) {
-                                    cMask.setMaskType(MaskType.fromString(value));
-                                    break;
-                                }
-                            }
-
-                            if (config.getValue(key) instanceof CEnum<?> cEnum) {
-                                cEnum.setEnumStr(value);
-                            }
-                            break;
-                        }
-                        case "M": {
-                            maskKey = key;
-                            break;
-                        }
-                        case "I": {
-                            if (config.getValue(key) instanceof CInteger cInteger) {
-                                cInteger.set(Integer.parseInt(value));
-                            }
-                            break;
-                        }
-                        case "F": {
-                            if (config.getValue(key) instanceof CFloat cFloat) {
-                                cFloat.set(Float.parseFloat(value));
-                            }
-                        }
-                        case "D": {
-                            if (config.getValue(key) instanceof CDouble cDouble) {
-                                cDouble.set(Double.parseDouble(value));
-                            }
-                        }
-                        case "S": {
-                            if (config.getValue(key) instanceof CString cString) {
-                                cString.set(value.substring(1, value.length() - 1));
-                            }
-                        }
-                        case "A": {
-                            String arrayType = key.split("_")[1];
-                            arrayKey = key.split("_")[2];
-
-                            switch (arrayType) {
-                                case "I": {
-                                    if (config.getValue(key) instanceof CIntArray cIntArray) {
-                                        cIntArray.add(Integer.parseInt(value.substring(0, value.length() - 1)));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    FernConfig.LOGGER.warn("Error reading config file: {}", fileName);
-                    e.printStackTrace();
-                }
-            }
         }
 
         return defaultMap;

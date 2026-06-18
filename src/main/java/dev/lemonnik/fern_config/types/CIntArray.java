@@ -26,10 +26,6 @@ public class CIntArray extends CValue<IntArray> {
         this.values = values;
     }
 
-    public void add(int value) {
-        values.values().add(value);
-    }
-
     @Override
     public boolean isDefault() {
         return Objects.equals(values, defaultValues);
