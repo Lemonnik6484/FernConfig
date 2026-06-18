@@ -20,7 +20,6 @@
 - [X] Double
 - [ ] Arrays
 - [ ] YAML save format
-- [ ] JSON save format
 - [ ] Separate folder possibility for configs
 - [ ] Ingame config editing screen
 - [ ] Server-side datadriven config menu on new versions

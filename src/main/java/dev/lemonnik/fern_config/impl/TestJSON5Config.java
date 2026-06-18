@@ -5,9 +5,12 @@ import dev.lemonnik.fern_config.CExporter;
 import dev.lemonnik.fern_config.FernConfig;
 import dev.lemonnik.fern_config.types.*;
 import dev.lemonnik.fern_config.utils.CCategory;
+import dev.lemonnik.fern_config.utils.IntArray;
 import dev.lemonnik.fern_config.utils.MaskType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class TestJSON5Config extends CConfig {
     @Override
@@ -51,4 +54,10 @@ public class TestJSON5Config extends CConfig {
             "*:*"
         )
     );
+
+    public final CIntArray int_array = register(COMPLEX_THINGS, new CIntArray(
+            "array_of_ints",
+            "Everything here depends on line breaks, DO NOT serialize configs unless you want them to break",
+            new IntArray(List.of(1, 2, 3))
+    ));
 }

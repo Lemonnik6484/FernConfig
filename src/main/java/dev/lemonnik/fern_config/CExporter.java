@@ -18,6 +18,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +44,8 @@ public class CExporter {
         CMap defaultMap = config.getcMap();
 
         String maskKey = "";
-
+        String arrayKey = "";
+        // TODO: fix strings, mask values, array values
         try {
             content = Files.readAllLines(path).toArray(new String[0]);
         } catch (Exception e) {
@@ -60,6 +62,16 @@ public class CExporter {
         Pattern valuePattern = Pattern.compile("\"?([^\"\\s=]+)\"?\\s*[:=]\\s*([^,]+)");
 
         for (String line : content) {
+            if (!maskKey.isEmpty() && Objects.equals(line, "],")) {
+                maskKey = "";
+                continue;
+            }
+
+            if (!arrayKey.isEmpty() && Objects.equals(line, "],")) {
+                arrayKey = "";
+                continue;
+            }
+
             if (!maskKey.isEmpty() && (line.startsWith("\"") && line.endsWith("\","))) {
                 if (config.getValue(maskKey) instanceof CMask cMask) {
                     line = line.substring(1, line.length() - 2);
@@ -120,6 +132,18 @@ public class CExporter {
                         case "S": {
                             if (config.getValue(key) instanceof CString cString) {
                                 cString.set(value.substring(1, value.length() - 1));
+                            }
+                        }
+                        case "A": {
+                            String arrayType = key.split("_")[1];
+                            arrayKey = key.split("_")[2];
+
+                            switch (arrayType) {
+                                case "I": {
+                                    if (config.getValue(key) instanceof CIntArray cIntArray) {
+                                        cIntArray.add(Integer.parseInt(value.substring(0, value.length() - 1)));
+                                    }
+                                }
                             }
                         }
                     }

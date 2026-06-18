@@ -76,7 +76,7 @@ public class CMask extends CValue<Mask> {
                 sb.append("        \"").append(mask).append("\",\n");
             }
             sb.append("    ").append("],\n");
-            sb.append("}");
+            sb.append("},");
         } else if (format == CExporter.Format.TOML) {
             sb.append("# ").append(comment).append("\n");
             sb.append(key).append(" = {\n");
