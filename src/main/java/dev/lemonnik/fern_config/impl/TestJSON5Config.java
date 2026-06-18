@@ -7,7 +7,13 @@ import dev.lemonnik.fern_config.types.*;
 import dev.lemonnik.fern_config.utils.CCategory;
 import dev.lemonnik.fern_config.utils.FloatArray;
 import dev.lemonnik.fern_config.utils.MaskType;
+
+//? if >1.19.2 {
 import net.minecraft.core.registries.BuiltInRegistries;
+//?} else {
+/*import net.minecraft.core.Registry;
+*///?}
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -44,7 +50,11 @@ public class TestJSON5Config extends CConfig {
     public final CMask block_mask_itself = register(COMPLEX_THINGS, new CMask(
             "block_mask",
             "This is mask itself that requires CEnum-of-MaskType's key to be created and config to access that enum -> ",
+            //? >1.19.2 {
             BuiltInRegistries.BLOCK,
+            //?} else {
+            /*Registry.BLOCK,
+            *///?}
             new CEnum<MaskType>(
                     "mask_type",
                     "This is type of mask",
