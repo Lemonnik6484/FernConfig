@@ -67,13 +67,13 @@ public class CExporter {
                     inMaskValues = false;
                     if (config.getValue(maskKey) instanceof CMask cMask) {
                         cMask.setMaskStr(currentList);
+                        currentList.clear();
                     }
                     continue;
                 }
 
                 if (!arrayKey.isEmpty() && line.startsWith("]")) {
                     String arrayType = arrayKey.split("_")[1];
-                    arrayKey = "";
 
                     switch (arrayType) {
                         case "I": {
@@ -82,10 +82,12 @@ public class CExporter {
                                         .map(Integer::parseInt)
                                         .toList();
                                 cIntArray.set(new IntArray(ints));
+                                currentList.clear();
                             }
                             break;
                         }
                     }
+                    arrayKey = "";
                     continue;
                 }
 

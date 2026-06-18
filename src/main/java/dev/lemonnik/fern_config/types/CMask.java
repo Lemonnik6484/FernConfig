@@ -38,6 +38,7 @@ public class CMask extends CValue<Mask> {
     }
 
     public void setMaskStr(List<String> maskStr) {
+        maskStr = new ArrayList<>(maskStr);
         this.maskStr = maskStr;
         this.mask = createMask(maskStr);
     }
