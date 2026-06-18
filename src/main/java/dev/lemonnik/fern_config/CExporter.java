@@ -52,24 +52,35 @@ public class CExporter {
         try {
             content = Files.readAllLines(path).toArray(new String[0]);
 
-            Pattern valuePattern = Pattern.compile("\"?([^\"\\s=]+)\"?\\s*[:=]\\s*([^,]+)");
+            Pattern valuePattern = Pattern.compile("\"?([^\"\\s=]+)\"?\\s*[:=]\\s*(.*)");
 
             for (String line : content) {
                 line = line.trim();
-                System.out.println(line);
 
-                if (!maskKey.isEmpty() && line.startsWith("}")) {
-                    maskKey = "";
-                    continue;
-                }
-
-                if (inMaskValues && line.startsWith("]")) {
-                    inMaskValues = false;
-                    if (config.getValue(maskKey) instanceof CMask cMask) {
-                        cMask.setMaskStr(currentList);
-                        currentList.clear();
+                // mask
+                if (!maskKey.isEmpty()) {
+                    //mask end
+                    if (line.startsWith("}")) {
+                        maskKey = "";
+                        continue;
                     }
-                    continue;
+
+                    if (inMaskValues) {
+                        // values end
+                        if (line.startsWith("]")) {
+                            inMaskValues = false;
+                            if (config.getValue(maskKey) instanceof CMask cMask) {
+                                cMask.setMaskStr(currentList);
+                                currentList.clear();
+                            }
+                            continue;
+                        }
+
+                        // values
+                        line = line.split("\"")[1];
+                        currentList.add(line);
+                        continue;
+                    }
                 }
 
                 if (!arrayKey.isEmpty() && line.startsWith("]")) {
@@ -95,14 +106,6 @@ public class CExporter {
                     inMaskValues = true;
                 }
 
-                if (!maskKey.isEmpty() && (line.startsWith("\"") && line.endsWith("\","))) {
-                    if (inMaskValues) {
-                        line = line.split("\"")[1];
-                        currentList.add(line);
-                        continue;
-                    }
-                }
-
                 if (!arrayKey.isEmpty()) {
                     String arrayType = arrayKey.split("_")[1];
 
@@ -125,21 +128,20 @@ public class CExporter {
                         switch (prefix) {
                             case "B": {
                                 if (config.getValue(key) instanceof CBoolean cBoolean) {
-                                    cBoolean.set(Boolean.parseBoolean(value));
+                                    cBoolean.set(Boolean.parseBoolean(value.split(",")[0]));
                                 }
                                 break;
                             }
                             case "E": {
-                                value = value.substring(1, value.length() - 1);
                                 if (!maskKey.isEmpty()) {
                                     if (config.getValue(maskKey) instanceof CMask cMask) {
-                                        cMask.setMaskType(MaskType.fromString(value));
+                                        cMask.setMaskType(MaskType.fromString(value.split("\"")[1]));
                                         break;
                                     }
                                 }
 
                                 if (config.getValue(key) instanceof CEnum<?> cEnum) {
-                                    cEnum.setEnumStr(value);
+                                    cEnum.setEnumStr(value.split("\"")[1]);
                                 }
                                 break;
                             }
@@ -149,25 +151,25 @@ public class CExporter {
                             }
                             case "I": {
                                 if (config.getValue(key) instanceof CInteger cInteger) {
-                                    cInteger.set(Integer.parseInt(value));
+                                    cInteger.set(Integer.parseInt(value.split(",")[0]));
                                 }
                                 break;
                             }
                             case "F": {
                                 if (config.getValue(key) instanceof CFloat cFloat) {
-                                    cFloat.set(Float.parseFloat(value));
+                                    cFloat.set(Float.parseFloat(value.split(",")[0]));
                                 }
                                 break;
                             }
                             case "D": {
                                 if (config.getValue(key) instanceof CDouble cDouble) {
-                                    cDouble.set(Double.parseDouble(value));
+                                    cDouble.set(Double.parseDouble(value.split(",")[0]));
                                 }
                                 break;
                             }
                             case "S": {
                                 if (config.getValue(key) instanceof CString cString) {
-                                    cString.set(value.substring(1, value.length() - 1));
+                                    cString.set(value.split("\"")[1]);
                                 }
                                 break;
                             }
