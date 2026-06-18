@@ -1,17 +1,11 @@
 package dev.lemonnik.fern_config.types;
 
-import dev.lemonnik.fern_config.CConfig;
 import dev.lemonnik.fern_config.CExporter;
 import dev.lemonnik.fern_config.utils.CValue;
 import dev.lemonnik.fern_config.utils.Mask;
 import dev.lemonnik.fern_config.utils.MaskType;
-//? if >1.19.2 {
-import net.minecraft.core.registries.BuiltInRegistries;
-//?} else {
-/*import net.minecraft.core.Registry;
-*///?}
+import net.minecraft.core.Registry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -19,12 +13,14 @@ public class CMask extends CValue<Mask> {
     private final Mask defaultMask;
     private List<String> maskStr;
     private Mask mask;
-    private CEnum<MaskType> maskType;
+    private final Registry<?> registry;
+    private final CEnum<MaskType> maskType;
 
-    public CMask(String key, String comment, CEnum<MaskType> maskTypeCEnum, CConfig config, String... maskStr) {
+    public CMask(String key, String comment, Registry<?> registry, CEnum<MaskType> maskTypeCEnum, String... maskStr) {
         super(key, comment);
 
         this.maskStr = List.of(maskStr);
+        this.registry = registry;
         this.maskType = maskTypeCEnum;
         this.defaultMask = createMask(maskStr);
         this.mask = createMask(maskStr);
@@ -37,11 +33,6 @@ public class CMask extends CValue<Mask> {
 
     public List<String> getMaskStr() {
         return maskStr;
-    }
-
-    public void setMaskStr(String[] maskStr) {
-        this.maskStr = List.of(maskStr);
-        this.mask = createMask(maskStr);
     }
 
     public void setMaskStr(List<String> maskStr) {
@@ -116,10 +107,6 @@ public class CMask extends CValue<Mask> {
     }
 
     private Mask createMask(List<String> maskStr) {
-        //? if >1.19.2 {
-        return new Mask(BuiltInRegistries.BLOCK, maskType.get(), maskStr);
-        //?} else {
-        /*return new Mask(Registry.BLOCK, maskType.get(), maskStr);
-        *///?}
+        return new Mask(registry, maskType.get(), maskStr);
     }
 }

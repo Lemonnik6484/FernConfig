@@ -13,10 +13,7 @@
 - [X] TOML save format
 - [X] Boolean
 - [X] Enum
-- [X] Block entity Mask
-- [ ] Block Mask
-- [ ] Item Mask
-- [ ] Entity Mask
+- [X] Mask
 - [X] String
 - [X] Integer
 - [X] Float
